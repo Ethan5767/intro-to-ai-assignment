@@ -206,3 +206,35 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 datasets
+
+# --- MultiLexNorm project ---
+
+# Trained checkpoints (large)
+ckpts/
+**/ckpts/
+runs/
+
+# Per-language model predictions and intermediate outputs
+outputs/byt5/
+outputs/mt5/
+outputs/final/
+outputs/*.zip
+outputs/english_capability_report.json
+outputs/picker.json
+
+# CSV summaries are useful to commit (small) — keep them tracked.
+!outputs/summary_*.csv
+!outputs/.gitkeep
+
+# Hugging Face cache
+.cache/
+hf_cache/
+
+# Personal scratch scripts (not needed for reproduction)
+fast_score.py
+score_only.py
+run_en_pipeline.py
+
+# Auth tokens — never commit
+.hf_token
+.env.local
