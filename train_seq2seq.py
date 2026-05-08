@@ -48,7 +48,7 @@ def main():
     p.add_argument("--lang", required=True)
     p.add_argument("--ckpt-root", default=os.environ.get("MLN_CKPT_ROOT", "./ckpts"),
                    help="where checkpoints live; override with $MLN_CKPT_ROOT")
-    p.add_argument("--epochs", type=int, default=3)
+    p.add_argument("--epochs", type=int, default=10)
     p.add_argument("--limit-eval", type=int, default=1000, help="cap val examples for per-epoch eval")
     p.add_argument("--max-steps", type=int, default=-1, help="for smoke testing")
     p.add_argument("--batch-size", type=int, default=2)
@@ -58,7 +58,7 @@ def main():
     p.add_argument("--max-out", type=int, default=64)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--limit-train", type=int, default=-1, help="cap train examples")
-    p.add_argument("--patience", type=int, default=1)
+    p.add_argument("--patience", type=int, default=2)
     args = p.parse_args()
 
     model_id = MODEL_PRESETS[args.model]
