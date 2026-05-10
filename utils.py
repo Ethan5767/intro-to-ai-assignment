@@ -26,24 +26,25 @@ def mfr(input_sent, counts):
         predictions.append(replacement)
     return predictions
 
-
-
 def evaluate(raw, gold, pred, ignCaps=False, verbose=False, info=True):
     cor = 0
     changed = 0
     total = 0
 
+    # 1. 에러 출력 방식을 print나 raise로 변경
     if len(gold) != len(pred):
-        err('Error: gold normalization contains a different numer of sentences(' + str(len(gold)) + ') compared to system output(' + str(len(pred)) + ')')
+        print(f'Error: gold normalization contains a different number of sentences({len(gold)}) compared to system output({len(pred)})')
+        return None
 
     for sentRaw, sentGold, sentPred in zip(raw, gold, pred):
         if len(sentGold) != len(sentPred):
-            err('Error: a sentence has a different length in you output, check the order of the sentences')
+            print('Error: a sentence has a different length in your output, check the order of the sentences')
+            continue # 혹은 break
+            
         for wordRaw, wordGold, wordPred in zip(sentRaw, sentGold, sentPred):
             if ignCaps:
-                wordRaw = wordRaw.lower()
-                wordGold = wordGold.lower()
-                wordPred = wordPred.lower()
+                wordRaw, wordGold, wordPred = wordRaw.lower(), wordGold.lower(), wordPred.lower()
+            
             if wordRaw != wordGold:
                 changed += 1
             if wordGold == wordPred:
@@ -54,14 +55,17 @@ def evaluate(raw, gold, pred, ignCaps=False, verbose=False, info=True):
 
     accuracy = cor / total
     lai = (total - changed) / total
-    err = (accuracy - lai) / (1-lai)
+    
+    # 2. 변수명을 err_rate 등으로 변경하여 함수 호출과 혼동 피하기
+    err_rate = (accuracy - lai) / (1 - lai) if (1 - lai) != 0 else 0
 
     if info:
         print('Baseline acc.(LAI): {:.2f}'.format(lai * 100)) 
         print('Accuracy:           {:.2f}'.format(accuracy * 100)) 
-        print('ERR:                {:.2f}'.format(err * 100))
+        print('ERR:                {:.2f}'.format(err_rate * 100))
 
-    return lai, accuracy, err
+    return lai, accuracy, err_rate
+
 
 
 def zip_files_flat(source_dir, output_zip, flag=None):
