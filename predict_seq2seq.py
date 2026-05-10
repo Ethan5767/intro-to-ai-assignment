@@ -58,7 +58,20 @@ def main():
     model = AutoModelForSeq2SeqLM.from_pretrained(args.ckpt).to("cuda")
 
     ds = load_dataset("weerayut/multilexnorm2026-dev-pub")
-    items = [dict(x) for x in ds[args.split] if x["lang"] == args.lang]
+
+    # 해당 언어의 모든 아이템을 일단 가져옵니다.
+    all_items = [dict(x) for x in ds["train"] if x["lang"] == args.lang]
+
+    if args.split == "validation" and not any(x["lang"] == args.lang for x in ds["validation"]):
+        # 공식 validation이 없는 경우 (trde 등), train의 마지막 10%를 가져옴
+        n = len(all_items)
+        cut = int(n * 0.9)
+        items = all_items[cut:]
+        print(f"[predict] No official validation set found. Using held-out 10% from train ({len(items)} items).")
+    else:
+        # 공식 split이 존재하면 기존 방식대로 진행
+        items = [dict(x) for x in ds[args.split] if x["lang"] == args.lang]
+    
     raw_sents = [it["raw"] for it in items]
     if not items:
         print(f"[predict] WARNING: no items for {args.lang}/{args.split}")
